@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <div th:replace="~{fragment :: meta}"></div>
+  <div th:replace="~{fragment :: styles}"></div>
+  <title>サブスク管理</title>
+</head>
+
+<body>
+<div class="nagoyameshi-wrapper">
+  <div th:replace="~{fragment :: header}"></div>
+
+  <main>
+    <div class="container nagoyameshi-container pb-5">
+      <nav class="my-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+          <li class="breadcrumb-item active" aria-current="page">サブスク管理</li>
+        </ol>
+      </nav>
+
+      <h1 class="mb-3 text-center">サブスク管理</h1>
+
+      <div th:if="${successMessage}" class="alert alert-info">
+        <span th:text="${successMessage}"></span>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+
+<!--         <p class="mb-2">
+            <span class="fw-bold">ユーザー：</span>
+            <span th:text="${users.name}"></span>
+          </p>
+		  -->
+          <p class="mb-2">
+            <span class="fw-bold">現在の状態：</span>
+            <span sec:authorize="hasRole('PAID')">有料会員</span>
+            <span sec:authorize="hasRole('GENERAL')">一般会員</span>
+            <span sec:authorize="hasRole('ADMIN')">管理者</span>
+          </p>
+
+          <hr>
+
+          <!-- サブスク情報が無い -->
+          <div th:unless="${user.role.name == 'ROLE_PAID'}">
+            <p class="mb-3">サブスク情報がありません（未購入）。</p>
+            <!-- 購入導線：作ってる購入ページに合わせてリンク先を変える -->
+            <a class="btn nagoyameshi-btn text-white" th:href="@{/subscription/purchase}">
+              有料会員になる
+            </a>
+          </div>
+
+          <!-- サブスク情報がある -->
+<!--        <div th:if="${user.role.name == 'ROLE_PAID'}">
+            <p class="mb-2">
+              <span class="fw-bold">ステータス：</span>
+              <span th:text="${subscription.status}"></span>
+            </p>
+
+            <p class="mb-2">
+              <span class="fw-bold">次回更新期限：</span>
+              <span th:text="${subscription.currentPeriodEnd}"></span>
+            </p>
+
+            <p class="mb-3">
+              <span class="fw-bold">開始：</span>
+              <span th:text="${subscription.startedAt}"></span>
+            </p>
+-->
+            <!-- 解約ボタン：PAIDのときだけ表示 -->
+            <div sec:authorize="hasRole('PAID')">
+              <form th:action="@{/subscription/cancel}" method="post">
+               
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="btn btn-outline-danger w-100">
+                  今すぐ解約する（一般会員に戻る）
+                </button>
+              </form>
+            </div>
+
+            <div sec:authorize="!hasRole('PAID')">
+              <p class="text-muted mb-0">解約ボタンは有料会員のみ表示されます。</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div th:replace="~{fragment :: footer}"></div>
+</div>
+
+<div th:replace="~{fragment :: script}"></div>
+</body>
+</html>

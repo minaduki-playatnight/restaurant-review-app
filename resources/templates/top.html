@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <div th:replace="~{fragment :: meta}"></div>   
+             
+        <div th:replace="~{fragment :: styles}"></div>
+       
+        <title>NAGOYAMESHIl</title>	
+    </head>
+    <body>
+        <div class="samuraitravel-wrapper">
+            <!-- ヘッダー -->
+            <div th:replace="~{fragment :: header}"></div>
+            
+            <main>
+                <div class="container pt-4 pb-5 samuraitravel-container">
+                    <div th:if="${param.loggedIn}" class="alert alert-info">
+                        ログインしました。
+						<a th:href="@{/shops}" class="btn btn-sm btn-primary ms-3">
+						        店舗一覧へ
+						</a>
+                    </div>  
+                    
+                    <div th:if="${param.loggedOut}" class="alert alert-info">
+                        ログアウトしました。
+                    </div>
+					
+					<div th:if="${successMessage}" class="alert alert-info">
+					    <span th:text="${successMessage}"></span>
+					</div>    
+					
+					
+					<div id="topCarousel" class="carousel slide" data-bs-ride="carousel">
+					  <div class="carousel-inner">
+
+					    <div th:each="shop, stat : ${newShops}"
+					         th:class="'carousel-item ' + (${stat.index} == 0 ? 'active' : '')">
+
+					      <img th:src="@{/storage/{img}(img=${shop.imageName})}"
+					           class="d-block w-100 top-hero-img"
+					           th:alt="${shop.name}">
+					    </div>
+
+					  </div>
+					  <div class="top-hero-overlay">
+					    <h2 class="nagoyameshi-top-header">B級と侮るなかれ</h2>
+					  </div>
+					</div>
+					
+					
+                </div>
+            </main>
+            
+            <!-- フッター -->
+            <div th:replace="~{fragment :: footer}"></div>
+        </div>    
+        
+        <div th:replace="~{fragment :: script}"></div>  
+	</body>
+</html>

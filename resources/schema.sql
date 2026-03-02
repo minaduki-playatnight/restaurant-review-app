@@ -1,0 +1,78 @@
+CREATE TABLE IF NOT EXISTS shops (
+   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   name VARCHAR(50) NOT NULL,  
+   image_name VARCHAR(255),
+   description VARCHAR(255) NOT NULL,
+   capacity INT NOT NULL,
+   postal_code VARCHAR(50) NOT NULL,
+   address VARCHAR(255) NOT NULL,
+   phone_number VARCHAR(50) NOT NULL,
+   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS roles (
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS users (
+   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   name VARCHAR(50) NOT NULL, 
+   furigana  VARCHAR(50) NOT NULL,
+   phone_number VARCHAR(50) NOT NULL,
+   email VARCHAR(255) NOT NULL UNIQUE,
+   password  VARCHAR(255) NOT NULL,
+   role_id INT NOT NULL,
+   enable BOOLEAN NOT NULL,
+   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   FOREIGN KEY (role_id) REFERENCES roles (id)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS verification_tokens (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    token VARCHAR(255) NOT NULL,        
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) 
+);
+
+
+CREATE TABLE IF NOT EXISTS reservations (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    shop_id INT NOT NULL,
+    user_id INT NOT NULL,
+    start_at DATETIME NOT NULL,
+    end_at DATETIME NOT NULL,
+    party_size INT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (shop_id) REFERENCES shops (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS subscription (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'INACTIVE',
+    stripe_customer_id VARCHAR(255) NULL,
+    stripe_subscription_id VARCHAR(255) NULL,
+    current_period_end DATETIME NULL,
+    started_at DATETIME NULL,
+    end_at DATETIME NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE KEY uk_subscription_user (user_id),
+    UNIQUE KEY uk_subscription_subscription (stripe_subscription_id),
+    UNIQUE KEY uk_subscription_customer (stripe_customer_id),
+
+    CONSTRAINT fk_subscription_users
+      FOREIGN KEY (user_id) REFERENCES users (id)
+);

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <div th:replace="~{fragment :: meta}"></div>
+  <div th:replace="~{fragment :: styles}"></div>
+  <title>店舗一覧</title>
+</head>
+
+<body>
+<div class="nagoyameshi-wrapper">
+  <div th:replace="~{fragment :: header}"></div>
+
+  <main class="container pt-4 pb-5 nagoyameshi-container">
+
+    <div class="mb-3" th:each="shop : ${shopPage}">
+      <a th:href="@{/shops/{id}(id=${shop.id})}" class="link-dark nagoyameshi-card-link">
+        <div class="card h-100">
+          <div class="row g-0">
+
+            <div class="col-md-4">
+              <img th:if="${shop.imageName}"
+                   th:src="@{/storage/{file}(file=${shop.imageName})}"
+                   class="card-img-top nagoyameshi-horizontal-card-image" alt="店舗画像">
+              <img th:unless="${shop.imageName}"
+                   th:src="@{/images/noImage.png}"
+                   class="card-img-top nagoyameshi-horizontal-card-image" alt="NO IMAGE">
+            </div>
+
+            <div class="col-md-8">
+              <div class="card-body">
+                <h3 class="card-title mb-2" th:text="${shop.name}"></h3>
+
+                <!-- バッジ -->
+                <div class="mb-2">
+					<span class="badge text-bg-success"
+					      sec:authorize="hasAnyRole('PAID', 'ADMIN')">
+					  予約可
+					</span>
+					<span class="badge text-bg-secondary"
+					      sec:authorize="!hasAnyRole('PAID', 'ADMIN')">
+					  予約は有料会員限定。<a th:href="@{/subscription}" class="btn btn-sm btn-primary ms-3">有料会員登録</a>
+					</span>
+                </div>
+
+                <hr class="mb-3">
+
+                <p class="card-text mb-2" th:text="${shop.description}"></p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </a>
+    </div>
+
+	<!-- ページネーション -->
+	<div th:if="${shopPage.totalPages > 1}" class="d-flex justify-content-center">
+	  <nav aria-label="店舗一覧ページ">
+	    <ul class="pagination">
+
+	      <li class="page-item">
+	        <span th:if="${shopPage.first}" class="page-link disabled">前</span>
+	        <a th:unless="${shopPage.first}"
+	           th:href="@{/shops(page=${shopPage.number - 1})}"
+	           class="page-link nagoyameshi-page-link">前</a>
+	      </li>
+
+	      <li th:each="i : ${#numbers.sequence(0, shopPage.totalPages - 1)}" class="page-item">
+	        <span th:if="${i == shopPage.number}"
+	              class="page-link active nagoyameshi-active"
+	              th:text="${i + 1}"></span>
+
+	        <a th:unless="${i == shopPage.number}"
+	           th:href="@{/shops(page=${i})}"
+	           class="page-link nagoyameshi-page-link"
+	           th:text="${i + 1}"></a>
+	      </li>
+
+	      <li class="page-item">
+	        <span th:if="${shopPage.last}" class="page-link disabled">次</span>
+	        <a th:unless="${shopPage.last}"
+	           th:href="@{/shops(page=${shopPage.number + 1})}"
+	           class="page-link nagoyameshi-page-link">次</a>
+	      </li>
+
+	    </ul>
+	  </nav>
+	</div>
+	
+	<!--
+		<div th:if="${shopPage.totalPages > 1}" class="d-flex justify-content-center"> 
+			<nav aria-label="店舗一覧ページ">
+				 <ul class="pagination"> 
+					<li class="page-item">
+						 <span th:if="${shopPage.first}" class="page-link disabled">前</span> 
+						 <a th:unless="${shopPage.first}" th:href="@{/shop(page=${shopPage.number - 1}}" class="page-link nagoyameshi-page-link">前</a>
+					  </li> 
+					  <li th:each="i : ${#numbers.sequence(0, shopPage.totalPages - 1)}" class="page-item">
+						 <span th:if="${i == shopPage.number}" class="page-link active nagoyameshi-active" th:text="${i + 1}"></span> 
+						 <a th:unless="${i == shopPage.number}" th:href="@{/shop(page=${i}}" class="page-link nagoyameshi-page-link" th:text="${i + 1}"></a> 
+					 </li>
+					  <li class="page-item"> 
+						<span th:if="${shopPage.last}" class="page-link disabled">次</span>
+						 <a th:unless="${shopPage.last}" th:href="@{/shop(page=${shopPage.number + 1})}" class="page-link nagoyameshi-page-link">次</a> 
+					 </li> 
+				 </ul> 
+			 </nav> 
+		 </div>
+	-->
+
+	
+	
+	
+  </main>
+
+  <div th:replace="~{fragment :: footer}"></div>
+</div>
+
+<div th:replace="~{fragment :: script}"></div>
+</body>
+</html>
