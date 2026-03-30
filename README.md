@@ -1,5 +1,10 @@
-# 食べログ風レビューアプリ
-Java / Spring Boot を用いて開発したレビュー・予約Webアプリです。
+# Restaurant Review Web App
+
+Java / Spring Boot を用いて開発した食べログ風レビュー・予約Webアプリです。  
+ユーザーは店舗を検索・閲覧し、有料ユーザーは予約機能を利用できます。  
+管理者は店舗の登録や予約管理を行うことができます。
+
+---
 
 ## デモ
 
@@ -8,31 +13,25 @@ URL
 
 ### デモアカウント
 
-一般ユーザー  
-email: yoshino.test@example.com
-password: password
+| 権限 | email | password |
+|-----|------|------|
+| 無料ユーザー | yoshino.test@example.com | password |
+| 有料ユーザー | sana.test@example.com | password |
+| 管理者 | chihiro.test@example.com | password |
 
-有料ユーザー  
-email: sana.test@example.com
-password: password
-
-管理者  
-email:chihiro.test@example.com
-password: password
-
-※デモ用アカウントのため自由にログインしてお試しください。
+※デモ用アカウントのため自由にログインしてお試しいただけます
 
 ---
 
 ## 主な機能
 
 - ユーザー登録 / ログイン（Spring Security）
-- 民宿一覧表示（カードUI）
-- 民宿詳細ページ
+- 店舗一覧表示（カード形式UI）
+- 店舗詳細ページ
 - 予約機能（30分刻み）
 - 予約履歴表示（有料ユーザー）
-- Stripe決済
-- 管理者による宿泊施設登録 / 編集
+- Stripeによる決済機能
+- 管理者による店舗登録 / 編集
 - 予約管理機能
 
 ---
@@ -42,23 +41,33 @@ password: password
 | 技術 | 内容 |
 |-----|-----|
 | Java | 17 |
-| Spring Boot | Webアプリ開発 |
+| Spring Boot | Webアプリケーションフレームワーク |
 | Spring Security | 認証 / 権限管理 |
 | Thymeleaf | テンプレートエンジン |
-| MySQL | ローカルDB |
+| MySQL | ローカルデータベース |
 | PostgreSQL | Heroku環境 |
 | Git / GitHub | ソース管理 |
-| Heroku | デプロイ |
+| Heroku | アプリケーションデプロイ |
+| Stripe API | 決済機能 |
 
 ---
 
 ## システム構成
 
-- MVCアーキテクチャを採用
-- ユーザーロールによる権限制御
-  - 無料ユーザー
-  - 有料ユーザー
-  - 管理者
+MVCアーキテクチャを採用し、以下のユーザーロールによる権限制御を実装しています。
+
+- 無料ユーザー：店舗閲覧のみ可能
+- 有料ユーザー：店舗予約・予約履歴確認が可能
+- 管理者：店舗登録 / 編集・予約管理が可能
+
+---
+
+## 工夫した点
+
+- 有料ユーザーのみ予約可能とするロールベースアクセス制御を実装
+- 予約時間を30分単位で選択できるよう設計
+- 外部決済サービス（Stripe）と連携した決済機能を実装
+- 管理者画面を作成し、店舗情報を管理できるようにした
 
 ---
 
